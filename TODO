@@ -1,0 +1,14 @@
+# TODO 
+#- install script && Init Scrip to install nShield and setup conf /etc/nshield/nshield.conf + whitelist
+#- running service
+#- IPT rules management (Clean & remove duplicates)
+#- User Agent  ( Nginx/Apache/HAProxy Access Log Parse and block bots and scan) 
+#- IP /ASN ( Logged IPs from iptables --> check requests by ASN and DROP /24 in case of flood)  
+#- Requests rate ( Log requests rate by IP )  
+#- Payload size check 
+#- Setup correctly IPT logging + rotation 
+#- deny wp/cms-scan, Common bots, wp-login & access to admin
+#- Rate limiting rules for services: HTTP,SMTP,DNS
+#- Enable vhost on nginx to proxy_pass traffic to real site 
+#- Show with ncurse graph of requests by IP
+#- Clean Doc && future GUI?
