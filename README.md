@@ -13,6 +13,8 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
 
 ```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nShield/install.sh```
 
+# WARNING: This script will replace all your iptables rules so take that into account
+
 ## Usage
 
 The above quickstart/installation script will install python if not preset and download all the repo with example config files, after that will be executed a bash script to setup a cron that will run every 30 minutes.
