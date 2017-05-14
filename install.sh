@@ -9,6 +9,16 @@ mkdir /etc/nshield
 # Configures ipt connection logging to separate file
 echo ':msg, contains, "nShield"       /var/log/nshield.log' >> /etc/rsyslog.conf && service rsyslog restart
 
+echo "/var/log/nshield.log {
+    maxsize 100M
+    hourly
+    missingok
+    rotate 4
+    compress
+    notifempty
+    nocreate
+}" > /etc/logrotate.d/nshield
+
 echo "Copying example configuration... \n"
 
 wget -O /etc/nshield/nshield.conf https://raw.githubusercontent.com/fnzv/nShield/master/example/nshield.conf
