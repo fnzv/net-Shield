@@ -6,6 +6,8 @@ apt-get install -y python
 
 mkdir /etc/nshield
 
+# Configures ipt connection logging to separate file
+echo ':msg, contains, "nShield"       /var/log/nshield.log' >> /etc/rsyslog.conf && service rsyslog restart
 
 echo "Copying example configuration... \n"
 
