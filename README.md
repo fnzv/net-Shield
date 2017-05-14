@@ -9,7 +9,7 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
 - Linux System with python, iptables
 
 ## Installation
-.. soon
+```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nShield/install.sh```
 
 ## Usage
 python nshield-main.py (soon binaries or service with supervisord)
