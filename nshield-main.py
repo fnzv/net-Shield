@@ -51,7 +51,7 @@ for ip in splitted_nginx_iplist:
        if "." in ip:
   	print ip+" - MNT BY: "+os.popen("curl -s ipinfo.io/"+ip+"/org").read()
 
-
+os.popen("iptables -F")
 ipt_iplist=os.popen("cat /var/log/nshield.log | awk '{ print $12 }' | sed s'/SRC=//' | sort -n | uniq -c | grep -v DST").read()
 top_ipt_iplist=os.popen("cat /var/log/nshield.log | awk '{ print $12 }' | sed s'/SRC=//' | sort -n | uniq -c | sort -rn | grep -v DST | head").read()
 splitted_ipt_iplist=ipt_iplist.split()
