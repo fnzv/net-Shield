@@ -19,7 +19,7 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
 
 The above quickstart/installation script will install python if not preset and download all the repo with example config files, after that will be executed a bash script to setup a cron that will run every 30 minutes.
 
- Config file is /etc/nshield/nshield.conf
+ Config file is /etc/nshield/nshield.conf (An example can be found in the repo)
  
 
 ## How it works
@@ -27,6 +27,7 @@ The above quickstart/installation script will install python if not preset and d
 - Get latest Bot,Spammers,Bad IP/Net reputation lists and blocks if those Bad guys are attacking your server (Thank you FireHol http://iplists.firehol.org/ )
 - Enables basic Anti-DDoS methods to deny unwanted/malicious traffic (Thank you iptables)
 - Rate limits when under attack (Thank you again iptables)
+- Allows HTTP Proxying to protect your site with an external proxy/server (Enabling nshield_proxy)
 
 ## Contributors
 
