@@ -17,6 +17,7 @@ dryrun = os.popen("cat /etc/nshield/nshield.conf | grep dry | awk '{print $3}'")
 basic_ddos = os.popen("cat /etc/nshield/nshield.conf | grep basic_ddos | awk '{print $3}'").read()
 under_attack = os.popen("cat /etc/nshield/nshield.conf | grep under_attack | awk '{print $3}'").read()
 resolve_asn = os.popen("cat /etc/nshield/nshield.conf | grep resolve_asn | awk '{print $3}'").read()
+nshield_proxy = os.popen("cat /etc/nshield/nshield.conf | grep nshield_proxy | awk '{print $3}'").read()
 
 
 #Update firehol ip/netsets
@@ -118,3 +119,30 @@ if basic_ddos:
 if under_attack:
 	# burst connections and add rate limits
 	os.popen('iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit 15/s --hashlimit-burst 30 --hashlimit-mode srcip --hashlimit-name synattack -j ACCEPT && iptables -A INPUT -p tcp --syn -j DROP')
+
+	
+	
+if nshield_proxy:
+        # Generates nginx proxy_pass from /etc/nshield/proxydomains
+        with open("/etc/nshield/proxydomains") as f:
+                content = f.readlines()
+                content1 = content[0].split(' ')
+                ip = content1[1].strip('\n')
+                domain = content1[0]
+                print "I Will generate proxy configuration for site "+domain+" on IP: "+ip
+                os.popen("""echo 'server {
+        listen 80 default_server;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name """+domain+""";
+
+        location / {
+    proxy_pass       http://"""+ip+""";
+    proxy_set_header Host      $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+}
+' >> /etc/nginx/sites-enabled/dynamic-vhost.conf""")
+
