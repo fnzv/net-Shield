@@ -19,6 +19,12 @@ echo "/var/log/nshield.log {
     nocreate
 }" > /etc/logrotate.d/nshield
 
+
+echo "Installing Nginx for nShield proxy..\n"
+apt install -y nginx
+
+
+
 echo "Copying example configuration... \n"
 
 wget -O /etc/nshield/nshield.conf https://raw.githubusercontent.com/fnzv/nShield/master/example/nshield.conf
