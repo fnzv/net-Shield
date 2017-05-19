@@ -11,11 +11,13 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices 
 - Linux System with python, iptables
 - Nginx (Will be installed automatically by install.sh)
 
-## Installation
+
+## Quickstart
 
 ```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nShield/install.sh```
 
 ### WARNING: This script will replace all your iptables rules so take that into account
+
 
 ## Usage
 
