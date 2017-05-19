@@ -123,15 +123,16 @@ if under_attack:
 	
 	
 if nshield_proxy:
-        # Generates nginx proxy_pass from /etc/nshield/proxydomains
+        # Generates nginx proxy_pass from /etc/nshield/proxydomains and checks if already present in nginx conf
         with open("/etc/nshield/proxydomains") as f:
                 content = f.readlines()
                 content1 = content[0].split(' ')
                 ip = content1[1].strip('\n')
                 domain = content1[0]
-                print "I Will generate proxy configuration for site "+domain+" on IP: "+ip
-                os.popen("""echo 'server {
-        listen 80 default_server;
+                if domain not in os.popen("cat /etc/nginx/sites-enabled/dynamic-vhost.conf").read():
+                    print "I Will generate proxy configuration for site "+domain+" on IP: "+ip
+                    os.popen("""echo 'server {
+        listen 80;
 
         root /var/www/html;
         index index.html index.htm index.nginx-debian.html;
@@ -145,4 +146,8 @@ if nshield_proxy:
 }
 }
 ' >> /etc/nginx/sites-enabled/dynamic-vhost.conf""")
+                else:
+                        print "Domain already configured"
+        os.popen('service nginx restart')
+        print "Now you can test that your site is reachable via nShield proxy by changing the domain DNS or via your PC hosts file or directly DNS A record"
 
