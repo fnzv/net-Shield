@@ -12,6 +12,10 @@ import os
 #Enables logging
 os.popen('iptables -I INPUT -m limit --limit 20/min -j LOG --log-prefix "nShield: " --log-level 7')
 
+
+# Log check
+os.popen('find /var/log/nshield.log -type f -size +50k -delete')
+
 #read conf and save variables
 dryrun = os.popen("cat /etc/nshield/nshield.conf | grep dry | awk '{print $3}'").read()
 basic_ddos = os.popen("cat /etc/nshield/nshield.conf | grep basic_ddos | awk '{print $3}'").read()
