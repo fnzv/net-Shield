@@ -146,8 +146,9 @@ if nshield_proxy:
 }
 }
 ' >> /etc/nginx/sites-enabled/dynamic-vhost.conf""")
-                else:
-                        print "Domain already configured"
                     os.popen('service nginx restart')
+                else:
+                    print "Domain already configured"
+
         print "Now you can test that your site is reachable via nShield proxy by changing the domain DNS or via your PC hosts file or directly DNS A record"
 
