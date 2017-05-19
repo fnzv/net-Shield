@@ -1,6 +1,7 @@
-## nShield
+## nShield 
 
-An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
+An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices based on iptables
+
 ![](nshield-scheme.png?raw=true)
 
 -----------------
@@ -18,12 +19,12 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
 
 ## Usage
 
-The above quickstart/installation script will install python if not preset and download all the repo with example config files, after that will be executed a bash script to setup a cron that will run every 30 minutes to check connections against common ipsets.
+The above quickstart/installation script will install python if not present and download all the repo with the example config files, after that will be executed a bash script to setup some settings and a cron that will run every 30 minutes to check connections against common ipsets.
+You can find example config files under examples folder.
 
- Config file is /etc/nshield/nshield.conf (An example can be found in the repo)
- 
 
 ## How it works
+Basicly the python script is set by default to run every 30 minutes and check the config file to execute operations.
 
 - Get latest Bot,Spammers,Bad IP/Net reputation lists and blocks if those Bad guys are attacking your server (Thank you FireHol http://iplists.firehol.org/ )
 - Enables basic Anti-DDoS methods to deny unwanted/malicious traffic 
@@ -32,6 +33,8 @@ The above quickstart/installation script will install python if not preset and d
 
 ## Demo
 [![asciicast](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r.png)](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r)
+
+Tested on Ubuntu 16.04 LTS
 
 ## Contributors
 
