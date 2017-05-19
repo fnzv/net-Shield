@@ -1,2 +1,6 @@
 mysite.com 123.123.123.123
 example.com 111.111.111.111
+
+
+# Example file to explain what proxydomains feature works
+# Every site listed there will be configured into Nginx to proxy_pass requests to the real IP address (Only HTTP now)
