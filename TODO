@@ -6,6 +6,7 @@
 #- User Agent  ( Nginx/Apache/HAProxy Access Log Parse and block bots and scan) 
 #- IP /ASN ( Logged IPs from iptables --> check requests by ASN and DROP /24 in case of flood)  
 #- Requests rate ( Log requests rate by IP )  
+#- Reporting in HTML or email latest/biggest attacks & blocks
 #- Payload size check 
 #- Setup correctly IPT logging + rotation 
 #- deny wp/cms-scan, Common bots, wp-login & access to admin
