@@ -2,6 +2,7 @@
 
 An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
 
+[![asciicast](https://asciinema.org/a/55x2glhogdx5ashkruaulu1yy.png)](https://asciinema.org/a/55x2glhogdx5ashkruaulu1yy)
 
 -----------------
 
