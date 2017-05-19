@@ -1,8 +1,7 @@
 ## nShield
 
 An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices
-
-[![asciicast](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r.png)](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r)
+![](nshield-scheme.png?raw=true)
 
 -----------------
 
@@ -30,6 +29,9 @@ The above quickstart/installation script will install python if not preset and d
 - Enables basic Anti-DDoS methods to deny unwanted/malicious traffic 
 - Rate limits when under attack 
 - Allows HTTP Proxying to protect your site with an external proxy/server  (HTTPS with Let's Encrypt in TODO)
+
+## Demo
+[![asciicast](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r.png)](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r)
 
 ## Contributors
 
