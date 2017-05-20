@@ -26,7 +26,7 @@ You can find example config files under examples folder.
 
 
 ## How it works
-Basicly the python script is set by default to run every 30 minutes and check the config file to execute operations.
+Basically this python script is set by default to run every 30 minutes and check the config file to execute these operations:
 
 - Get latest Bot,Spammers,Bad IP/Net reputation lists and blocks if those Bad guys are attacking your server (Thank you FireHol http://iplists.firehol.org/ )
 - Enables basic Anti-DDoS methods to deny unwanted/malicious traffic 
