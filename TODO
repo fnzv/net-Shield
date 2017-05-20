@@ -1,7 +1,8 @@
 # TODO 
 ## DONE - install script && Init Scrip to install nShield and setup conf /etc/nshield/nshield.conf + whitelist 
 ## DONE- running service --> Decided to use Cron and not supervisor service 
-# -AutoSSL Feature to proxydomains via Let's Encypt 
+## DONE -AutoSSL Feature to proxydomains via Let's Encypt  ..( Needs for custom functions like amce challenge .well-known & custom SSL)
+## Dryrun function to only parse logs and display output
 #- IPT rules management (Clean & remove duplicates)
 #- User Agent  ( Nginx/Apache/HAProxy Access Log Parse and block bots and scan) 
 #- IP /ASN ( Logged IPs from iptables --> check requests by ASN and DROP /24 in case of flood)  
