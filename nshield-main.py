@@ -194,4 +194,4 @@ if autossl:
     proxy_set_header X-Real-IP $remote_addr;
 }
 }
-' >> /etc/nginx/sites-enabled/dynamic-ssl-vhost.conf""") 
+' >> /etc/nginx/sites-enabled/dynamic-ssl-vhost.conf && service nginx restart""") 
