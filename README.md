@@ -24,7 +24,7 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices 
 The above quickstart/installation script will install python if not present and download all the repo with the example config files, after that will be executed a bash script to setup some settings and a cron that will run every 30 minutes to check connections against common ipsets.
 You can find example config files under examples folder.
 
-HTTPS Manually verification:
+HTTPS Manually verification is executed with this command under the repository directory:
 
  ``` python nshield-main.py -ssl ```
 
