@@ -5,7 +5,7 @@
 # Still in beta
 
 
-import os
+import os,argparse
 
 
 
@@ -23,6 +23,14 @@ under_attack = os.popen("cat /etc/nshield/nshield.conf | grep under_attack | awk
 resolve_asn = os.popen("cat /etc/nshield/nshield.conf | grep resolve_asn | awk '{print $3}'").read()
 nshield_proxy = os.popen("cat /etc/nshield/nshield.conf | grep nshield_proxy | awk '{print $3}'").read()
 
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-ssl', action='store_true', default=False,dest='autossl', help='Enable SSL on proxy domains')
+
+results = parser.parse_args()
+
+autossl = results.autossl
 
 #Update firehol ip/netsets
 
@@ -156,3 +164,34 @@ if nshield_proxy:
 
         print "Now you can test that your site is reachable via nShield proxy by changing the domain DNS or via your PC hosts file or directly DNS A record"
 
+
+# Is triggered only if run from commandline and not cron
+if autossl:
+    with open("/etc/nshield/proxydomains") as f:
+                content = f.readlines()
+                content1 = content[0].split(' ')
+                ip = content1[1].strip('\n')
+                domain = content1[0]
+                if domain not in os.popen("cat /etc/nginx/sites-enabled/dynamic-ssl-vhost.conf").read():
+                    print "I Will generate SSL certs for "+domain+" with Let's Encrypt DNS challenge"
+		    email = str(raw_input("Insert your email address? (Used for cert Expiration and Let's Encrypt TOS agreement \n"))
+		    os.system("certbot --text --agree-tos --email "+email+" -d "+domain+" --manual --preferred-challenges dns --expand --renew-by-default  --manual-public-ip-logging-ok certonly")
+		    print "Setting up Nginx configuration...\n"
+		    os.popen("""echo 'server {
+        listen 443 ssl;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+    ssl_certificate     /etc/letsencrypt/live/"""+domain+"""/cert.pem;
+    ssl_certificate_key /etc/letsencrypt/live/"""+domain+"""/privkey.pem;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+        server_name """+domain+""";
+
+        location / {
+    proxy_pass       http://"""+ip+""";
+    proxy_set_header Host      $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+}
+' >> /etc/nginx/sites-enabled/dynamic-ssl-vhost.conf""") 
