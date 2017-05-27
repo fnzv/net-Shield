@@ -18,8 +18,8 @@ Running as a standalone software (No install.sh required) via DryRun option (-dr
 
 ```python nshield-may.py -dry```
 
-
-For fresh installs:
+<br>
+For complete install: <br>
 ```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nShield/install.sh```
 
 ### WARNING: This script will replace all your iptables rules and installs Nginx so take that into account
