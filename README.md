@@ -73,7 +73,7 @@ Basically this python script is set by default to run every 30 minutes and check
 ## Demo
 [![asciicast](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r.png)](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r)
 
-Tested on Ubuntu 16.04 LTS
+Tested on Ubuntu 16.04 and 14.04 LTS
 
 ## Contributors
 
