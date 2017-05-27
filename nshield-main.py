@@ -5,23 +5,27 @@
 # Still in beta
 
 
-import os,argparse
+import os,argparse,ConfigParser
 
+config = ConfigParser.ConfigParser()
 
-
-#Enables logging
-os.popen('iptables -I INPUT -m limit --limit 20/min -j LOG --log-prefix "nShield: " --log-level 7')
+config.read("/etc/nshield/nshield.conf")
 
 
 # Log check
-os.popen('find /var/log/nshield.log -type f -size +50k -delete')
+os.popen('find /var/log/syslog -type f -size +500k -delete >/dev/null 2>&1')
 
 #read conf and save variables
-dryrun = os.popen("cat /etc/nshield/nshield.conf | grep dry | awk '{print $3}'").read()
-basic_ddos = os.popen("cat /etc/nshield/nshield.conf | grep basic_ddos | awk '{print $3}'").read()
-under_attack = os.popen("cat /etc/nshield/nshield.conf | grep under_attack | awk '{print $3}'").read()
-resolve_asn = os.popen("cat /etc/nshield/nshield.conf | grep resolve_asn | awk '{print $3}'").read()
-nshield_proxy = os.popen("cat /etc/nshield/nshield.conf | grep nshield_proxy | awk '{print $3}'").read()
+dryrun = int(config.get("conf","dryrun"))
+basic_ddos = int(config.get("conf","basic_ddos"))
+under_attack = int(config.get("conf","under_attack"))
+nshield_proxy = int(config.get("conf","nshield_proxy"))
+
+#print "Configuration loaded: \n"
+#print "dryrun: "+dryrun
+#print "\nbasic_ddos: "+basic_ddos
+#print "\nunder_attack: "+under_attack
+#print "\nnshield_proxy: "+nshield_proxy
 
 
 parser = argparse.ArgumentParser()
@@ -34,10 +38,10 @@ autossl = results.autossl
 
 #Update firehol ip/netsets
 
-os.popen("rm -rf firehol_level1.netset && wget -qN https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset")
-os.popen("rm -rf botscout_1d.ipset && wget -qN https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/botscout_1d.ipset")
-os.popen("rm -rf bi_any_2_30d.ipset && wget -qN https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/bi_any_2_30d.ipset")
-os.popen("rm -rf snort_ipfilter.ipset && wget -qN https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/snort_ipfilter.ipset")
+os.popen("wget -O firehol_level1.netset https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset  >/dev/null 2>&1")
+os.popen("wget -O botscout_1d.ipset  https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/botscout_1d.ipset >/dev/null 2>&1")
+os.popen("wget -O bi_any_2_30d.ipset https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/bi_any_2_30d.ipset  >/dev/null 2>&1")
+os.popen("wget -O snort_ipfilter.ipset https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/snort_ipfilter.ipset  >/dev/null 2>&1")
 
 #Load all sets from cwd
 blocklist_ipset=os.popen("cat *.ipset").read()
@@ -62,6 +66,7 @@ for ip in splitted_nginx_iplist:
   	print ip+" - MNT BY: "+os.popen("curl -s ipinfo.io/"+ip+"/org").read()
 
 os.popen("iptables -F")
+os.popen('iptables -I INPUT -j LOG --log-prefix "nShield: " --log-level 7')
 ipt_iplist=os.popen("cat /var/log/nshield.log | awk '{ print $12 }' | sed s'/SRC=//' | sort -n | uniq -c | grep -v DST").read()
 top_ipt_iplist=os.popen("cat /var/log/nshield.log | awk '{ print $12 }' | sed s'/SRC=//' | sort -n | uniq -c | sort -rn | grep -v DST | head").read()
 splitted_ipt_iplist=ipt_iplist.split()
@@ -110,7 +115,7 @@ for ip in whitelist.split():
 
 
 
-if basic_ddos:
+if basic_ddos is 1:
 	print "Setting up Basic DDoS Protection"
 
 	# Block SYN FLOOD
@@ -128,13 +133,14 @@ if basic_ddos:
 
 
 
-if under_attack:
+if under_attack is 1:
 	# burst connections and add rate limits
 	os.popen('iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit 15/s --hashlimit-burst 30 --hashlimit-mode srcip --hashlimit-name synattack -j ACCEPT && iptables -A INPUT -p tcp --syn -j DROP')
 
 	
 	
-if nshield_proxy:
+if nshield_proxy is 1:
+	print "Setting up nShield proxy for domains found in /etc/nshield/proxydomains\n"
         # Generates nginx proxy_pass from /etc/nshield/proxydomains and checks if already present in nginx conf
         with open("/etc/nshield/proxydomains") as f:
                 content = f.readlines()
