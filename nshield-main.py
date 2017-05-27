@@ -5,7 +5,7 @@
 # Still in beta
 
 
-import os,argparse,ConfigParser
+import os,argparse,ConfigParser,sys
 
 config = ConfigParser.ConfigParser()
 
@@ -32,9 +32,20 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('-ssl', action='store_true', default=False,dest='autossl', help='Enable SSL on proxy domains')
 
+parser.add_argument('-dry', action='store_true', default=False,dest='standalone', help='Standalone mode')
+
 results = parser.parse_args()
 
+
+
+if results.standalone: 
+	dryrun = 1
+	print "Running nShield in standalone mode.. Dryrun is now enabled for safety\n"
 autossl = results.autossl
+
+
+	
+
 
 #Update firehol ip/netsets
 
@@ -64,9 +75,9 @@ print "Top 10 ASN by NGINX Requests: \n"
 for ip in splitted_nginx_iplist:
        if "." in ip:
   	print ip+" - MNT BY: "+os.popen("curl -s ipinfo.io/"+ip+"/org").read()
-
-os.popen("iptables -F")
-os.popen('iptables -I INPUT -j LOG --log-prefix "nShield: " --log-level 7')
+if dryrun is 1:
+	os.popen("iptables -F")
+	os.popen('iptables -I INPUT -j LOG --log-prefix "nShield: " --log-level 7')
 ipt_iplist=os.popen("cat /var/log/nshield.log | awk '{ print $12 }' | sed s'/SRC=//' | sort -n | uniq -c | grep -v DST").read()
 top_ipt_iplist=os.popen("cat /var/log/nshield.log | awk '{ print $12 }' | sed s'/SRC=//' | sort -n | uniq -c | sort -rn | grep -v DST | head").read()
 splitted_ipt_iplist=ipt_iplist.split()
@@ -105,17 +116,17 @@ for ip in splitted_ipt_iplist:
 
 
 
+if dryrun is not 1:
+	print "Setting up whitelist .."
+	os.popen("iptables -I INPUT -i lo -j ACCEPT && iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT")
+	#check if its real ip before
+	for ip in whitelist.split():
+	    print ip
+	    os.popen("iptables -I INPUT -s "+ip+" -j ACCEPT -m comment --comment nShield-whitelist")	
 
-print "Setting up whitelist .."
-os.popen("iptables -I INPUT -i lo -j ACCEPT && iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT")
-#check if its real ip before
-for ip in whitelist.split():
-    print ip
-    os.popen("iptables -I INPUT -s "+ip+" -j ACCEPT -m comment --comment nShield-whitelist")	
 
 
-
-if basic_ddos is 1:
+if basic_ddos is 1 and dryrun is 0:
 	print "Setting up Basic DDoS Protection"
 
 	# Block SYN FLOOD
@@ -133,13 +144,13 @@ if basic_ddos is 1:
 
 
 
-if under_attack is 1:
+if under_attack is 1 and dryrun is 0:
 	# burst connections and add rate limits
 	os.popen('iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit 15/s --hashlimit-burst 30 --hashlimit-mode srcip --hashlimit-name synattack -j ACCEPT && iptables -A INPUT -p tcp --syn -j DROP')
 
 	
 	
-if nshield_proxy is 1:
+if nshield_proxy is 1 and dryrun is 0:
 	print "Setting up nShield proxy for domains found in /etc/nshield/proxydomains\n"
         # Generates nginx proxy_pass from /etc/nshield/proxydomains and checks if already present in nginx conf
         with open("/etc/nshield/proxydomains") as f:
@@ -172,7 +183,7 @@ if nshield_proxy is 1:
 
 
 # Is triggered only if run from commandline and not cron
-if autossl:
+if autossl and dryrun is 0:
     with open("/etc/nshield/proxydomains") as f:
                 content = f.readlines()
                 content1 = content[0].split(' ')
