@@ -212,3 +212,7 @@ if autossl and dryrun is 0:
 }
 }
 ' >> /etc/nginx/sites-enabled/dynamic-ssl-vhost.conf && service nginx restart""") 
+
+print "TOP Current Connections by IP \n"
+
+print os.popen("""netstat -atun | grep -v "Addr" | grep -v "and" | awk '{print $5}' | cut -d: -f1 | sed -e '/^$/d' |sort | uniq -c | sort -n""").read()
