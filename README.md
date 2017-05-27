@@ -14,9 +14,17 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices 
 
 ## Quickstart
 
+Running as a standalone software (No install.sh required) via DryRun option (-dry) to only check connections agains ip/netsets and do not touch iptables firewall.
+
+```python nshield-may.py -dry```
+
+<br>
+For complete install: <br>
+
 ```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nShield/install.sh```
 
-### WARNING: This script will replace all your iptables rules so take that into account
+### WARNING: This script will replace all your iptables rules and installs Nginx so take that into account
+
 
 
 ## Usage
