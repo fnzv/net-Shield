@@ -16,7 +16,7 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices 
 
 Running as a standalone software (No install.sh required) via DryRun option (-dry) to only check connections agains ip/netsets and do not touch iptables firewall.
 
-```python nshield-may.py -dry```
+```python nshield-main.py -dry```
 
 <br>
 For complete install: <br>
