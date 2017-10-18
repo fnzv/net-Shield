@@ -21,7 +21,7 @@ Running as a standalone software (No install.sh required) via DryRun option (-dr
 <br>
 For complete install: <br>
 
-```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nShield/install.sh```
+```cd /home/ && git clone https://github.com/fnzv/nShield.git && bash nshield/install.sh```
 
 ### WARNING: This script will replace all your iptables rules and installs Nginx so take that into account
 
