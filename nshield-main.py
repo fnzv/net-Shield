@@ -151,13 +151,13 @@ if under_attack is 1 and dryrun is 0:
 	
 	
 if nshield_proxy is 1 and dryrun is 0:
-	print "Setting up nShield proxy for domains found in /etc/nshield/proxydomains\n"
+        print "Setting up nShield proxy for domains found in /etc/nshield/proxydomains\n"
         # Generates nginx proxy_pass from /etc/nshield/proxydomains and checks if already present in nginx conf
         with open("/etc/nshield/proxydomains") as f:
-                content = f.readlines()
-                content1 = content[0].split(' ')
-                ip = content1[1].strip('\n')
-                domain = content1[0]
+             for line in f:
+                line = line.split(' ')
+                domain = line[0]
+                ip = line[1]
                 if domain not in os.popen("cat /etc/nginx/sites-enabled/dynamic-vhost.conf").read():
                     print "I Will generate proxy configuration for site "+domain+" on IP: "+ip
                     os.popen("""echo 'server {
