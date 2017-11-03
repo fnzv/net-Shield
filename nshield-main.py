@@ -155,9 +155,10 @@ if nshield_proxy is 1 and dryrun is 0:
         # Generates nginx proxy_pass from /etc/nshield/proxydomains and checks if already present in nginx conf
         with open("/etc/nshield/proxydomains") as f:
              for line in f:
+		print "LINE"
                 line = line.split(' ')
-                domain = str(line[0].split())
-                ip = line[1].split()
+                domain = str(line[0])
+                ip = line[1]
                 if domain not in os.popen("cat /etc/nginx/sites-enabled/dynamic-vhost.conf").read():
                     print "I Will generate proxy configuration for site "+domain+" on IP: "+ip
                     os.popen("""echo 'server {
