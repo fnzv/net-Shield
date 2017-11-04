@@ -12,7 +12,7 @@ An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices 
 - Nginx (Will be installed automatically by install.sh)
 
 
-## Quickstart
+### Quickstart
 
 Running as a standalone software (No install.sh required) via DryRun option (-dry) to only check connections agains ip/netsets and do not touch iptables firewall.
 
@@ -25,7 +25,7 @@ For complete install: <br>
 
 ### WARNING: This script will replace all your iptables rules and installs Nginx so take that into account
 
-## Proxy Domains
+### Proxy Domains
 To configure proxydomains you need to enable the option on /etc/nshield/nshield.con (nshield_proxy: 1) and be sure that the proxydomain list (/etc/nshield/proxydomain ) is following this format:<br>
 <br>
 ```
@@ -33,7 +33,9 @@ mysite.com 123.123.123.123
 example.com 111.111.111.111
 ```
 <br>
-## Usage
+
+### Usage
+
 
 The above quickstart/installation script will install python if not present and download all the repo with the example config files, after that will be executed a bash script to setup some settings and a cron that will run every 30 minutes to check connections against common ipsets.
 You can find example config files under examples folder.
