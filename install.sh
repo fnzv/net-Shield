@@ -31,4 +31,4 @@ wget -O /etc/nshield/nshield.conf https://raw.githubusercontent.com/fnzv/nShield
 wget -O /etc/nshield/whitelist https://raw.githubusercontent.com/fnzv/nShield/master/example/whitelist
 
 echo "Running nShield update every 1 hour.. "
-echo "30 * * * * python /home/nShield/nshield-main.py" >> /etc/crontab
+echo "30 * * * * python /home/net-Shield/nshield-main.py" >> /etc/crontab
