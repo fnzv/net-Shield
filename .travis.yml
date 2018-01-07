@@ -7,9 +7,8 @@ git:
   depth: 3
 
 before_install:
-  - sudo apt-get -qq update && sudo add-apt-repository -y ppa:certbot/certbot
-  - sudo apt-get update
-  - sudo apt-get install -y jq software-properties-common ipset python-certbot-nginx nginx
+  - sudo apt-get -qq update
+
 
 install: true
 
