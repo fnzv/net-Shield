@@ -2,7 +2,7 @@
 
 An Easy and Simple Anti-DDoS solution for VPS,Dedicated Servers and IoT devices based on iptables/ipsets
 
-![](img/nshield-scheme.png?raw=true)
+![](nshield-scheme.png?raw=true)
 
 -----------------
 
