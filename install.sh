@@ -13,9 +13,9 @@ echo "Downloading & Installing Golang.. \n"
  echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> /root/.bashrc
  echo "Checking Golang version\n"
  ln -s /usr/local/go/bin/go /usr/bin/go
+ rm -rf go1.9.2.linux-amd64.tar.gz && rm -rf go/
 
-
-mkdir /etc/nshield
+mkdir -p /etc/nshield/ipsets
 
 apt-get install -y jq software-properties-common
 sudo add-apt-repository ppa:certbot/certbot
