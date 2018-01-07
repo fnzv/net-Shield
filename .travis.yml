@@ -8,6 +8,7 @@ git:
 
 before_install:
   - sudo apt-get -qq update
+  - go get github.com/BurntSushi/toml
 
 
 install: true
@@ -16,6 +17,5 @@ install: true
 go_import_path: github.com/fnzv/net-Shield
 
 script:
-- go get github.com/BurntSushi/toml
 - go build shield.go
 - go build config-shield.go
