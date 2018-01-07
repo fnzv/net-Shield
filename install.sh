@@ -19,7 +19,7 @@ rm -rf go/
 rm -rf go1.9.2.linux-amd64.tar.gz
 mkdir -p /etc/nshield/ipsets/
 
-apt-get install -y jq software-properties-common ipsets
+apt-get install -y jq software-properties-common ipset
 sudo add-apt-repository -y ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install python-certbot-nginx  -y
