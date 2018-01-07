@@ -69,7 +69,10 @@ proxy = config.Proxy
 autossl = config.Autossl
 whitelist = config.Whitelist
 proxydomains = config.ProxyDomains
-
+exec_shell("wget -O /etc/nshield/ipsets/firehol_level1.netset https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset  >/dev/null 2>&1")
+exec_shell("wget -O /etc/nshield/ipsets/botscout_1d.ipset  https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/botscout_1d.ipset >/dev/null 2>&1")
+exec_shell("wget -O /etc/nshield/ipsets/bi_any_2_30d.ipset https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/bi_any_2_30d.ipset  >/dev/null 2>&1")
+exec_shell("wget -O /etc/nshield/snort_ipfilter.ipset https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/snort_ipfilter.ipset  >/dev/null 2>&1")
 
 f, err := os.OpenFile("/var/log/nshield.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 if err != nil {
