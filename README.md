@@ -66,6 +66,12 @@ Tested on Ubuntu 16.04 and 14.04 LTS
 
 Feel free to open issues or send me an email
 
+## Binaries
+
+In case you cannot compile it your self and/or run the install.sh you can find the binaries on: 
+https://github.com/fnzv/net-Shield/tree/master/binaries
+
+
 ## License
 
 Code distributed under MIT licence.
