@@ -51,7 +51,8 @@ apt install -y nginx
 echo "Copying example configuration... \n"
 
 wget -O /etc/nshield/nshield.conf https://raw.githubusercontent.com/fnzv/nShield/master/example/nshield.conf
-
+wget -O /etc/nginx/snippet/ssl.conf https://raw.githubusercontent.com/fnzv/nShield/master/example/ssl.conf
+wget -O /etc/nginx/snippet/le.conf https://raw.githubusercontent.com/fnzv/nShield/master/example/le.conf
 
 read -p "Enter a domain to protect: " domain
 
