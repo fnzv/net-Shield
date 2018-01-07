@@ -23,7 +23,8 @@ apt-get install -y jq software-properties-common ipset
 sudo add-apt-repository -y ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install python-certbot-nginx  -y
-
+touch /etc/nginx/sites-enabled/dynamic-ssl-vhost.conf
+touch /etc/nginx/sites-enabled/dynamic-vhost.conf
 
 echo 'Setting ipt new log file..'
 # Configures ipt connection logging to separate file
