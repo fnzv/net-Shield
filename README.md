@@ -58,7 +58,7 @@ Basically this script is set by default to run every 30 minutes and execute thes
 - Allows HTTP(S) Proxying to protect your site
 
 ## Demo
-[![asciicast](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r.png)](https://asciinema.org/a/elow8qggzb7q6durjpbxsmk6r)
+[![asciicast](https://asciinema.org/a/zozehdooPDbvem9tCDLI321Hp.png)](https://asciinema.org/a/zozehdooPDbvem9tCDLI321Hp)
 
 Tested on Ubuntu 16.04 and 14.04 LTS
 
