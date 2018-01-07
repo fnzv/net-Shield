@@ -13,9 +13,11 @@ echo "Downloading & Installing Golang.. \n"
  echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> /root/.bashrc
  echo "Checking Golang version\n"
  ln -s /usr/local/go/bin/go /usr/bin/go
- rm -rf go1.9.2.linux-amd64.tar.gz && rm -rf go/
 
-mkdir -p /etc/nshield/ipsets
+rm -rf go/
+
+rm -rf go1.9.2.linux-amd64.tar.gz
+mkdir -p /etc/nshield/ipsets/
 
 apt-get install -y jq software-properties-common
 sudo add-apt-repository ppa:certbot/certbot
@@ -48,3 +50,24 @@ apt install -y nginx
 echo "Copying example configuration... \n"
 
 wget -O /etc/nshield/nshield.conf https://raw.githubusercontent.com/fnzv/nShield/master/example/nshield.conf
+
+
+read -p "Enter a domain to protect: " domain
+
+read -p "Enter the real IP address of the website: " ip
+
+sed -i s"/example.org/$domain/"g /etc/nshield/nshield.conf
+
+sed -i s"/1.2.3.4/$ip/"g /etc/nshield/nshield.conf
+
+
+echo "Compiling source code.."
+
+go build shield.go
+
+go build config-shield.go
+
+cp config-shield /bin/config-shield
+cp shield /bin/shield
+
+echo "30 * * * * /bin/shield" >> /etc/crontab
