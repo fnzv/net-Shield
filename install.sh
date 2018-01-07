@@ -13,7 +13,7 @@ echo "Downloading & Installing Golang.. \n"
  echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> /root/.bashrc
  echo "Checking Golang version\n"
  ln -s /usr/local/go/bin/go /usr/bin/go
-
+go get github.com/BurntSushi/toml
 rm -rf go/
 
 rm -rf go1.9.2.linux-amd64.tar.gz
