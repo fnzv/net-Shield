@@ -37,12 +37,12 @@ proxydomains = [
 
 ### Usage
 
-After you completed the install with the quickstart script you can re-call the "conf-nshield" commad that will read the nshield.conf and re-configure shield rules based on the new configuration.
+After you completed the install with the quickstart script you can call the "config-nshield" commad that will read the nshield.conf and re-configure shield rules based on the new configuration.
 
 Example:
 I want to enable SSL on sami.pw that i just configured as above:
 1) Edit /etc/nshield/nshield.conf and set autossl = 1
-2) On your terminal run: ```# conf-shield ```
+2) On your terminal run: ```# config-shield ```
 3) You can now see the changes on the Nginx configuration
 
 The domain must point to the net-Shield instance otherwise will fail let's encrypt verification.
