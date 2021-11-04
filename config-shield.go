@@ -140,10 +140,7 @@ if (basicddos == 1 && dryrun == 0) {
  the following is just an example for the mangle table prerouting chain (before conntrack) that would also save on some cpu cycles on old/low powered hardware 
  (think arm SoCs or potato PCs)
  that helps block DDoS and portscanners
- This is probably overkill but it's a copy-paste from some of my old notes so it might still need testing
- 
- Fi
- 
+ This is probably overkill but it's a copy-paste from some of my old notes so it might still need testing: 
  
  bogus tcp flags () { */
 
@@ -226,14 +223,12 @@ To prevent the system from using resources tracking SYN Packets. */
 
 exec_shell("sysctl -w net/netfilter/nf_conntrack_tcp_loose=0")
 
-
+ 
 /*
 sources:
 https://www.hackplayers.com/2016/04/proteccion-ddos-mediante-exec_shell("iptables.html
 https://security.stackexchange.com/questions/4603/tips-for-a-secure-exec_shell("iptables-config-to-defend-from-attacks-client-side
-
-
- */
+*/
  //exec_shell("iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP")  //updated syntax below
     exec_shell("iptables -A INPUT -p tcp ! --syn -m conntrack --ctstate NEW -m comment --comment "All TCP sessions should begin with SYN" -j DROP")
     exec_shell("iptables -A INPUT -p tcp -m tcp ! --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW -m comment --comment "syn flood" -j DROP")
