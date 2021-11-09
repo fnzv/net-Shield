@@ -120,7 +120,7 @@ for range whitelist {
     whitelist_text = whitelist_text + whitelist[i1]
     //fmt.Printf("%s", out)
      if dryrun == 0 {
-     exec_shell("iptables -I INPUT -s "+whitelist[i1]+" -j ACCEPT -m comment --comment 'WHITELISTED IP - NSHIELD'")
+     exec_shell("iptables -I 1 INPUT -s "+whitelist[i1]+" -j ACCEPT -m comment --comment 'WHITELISTED IP - NSHIELD'")
         }
     i1++
 }
@@ -128,16 +128,132 @@ for range whitelist {
 
 
 log.Println("Setting ipt logs..")
-exec_shell(`iptables -I INPUT -m limit --limit 40/min  -j LOG --log-prefix "nShield: " --log-level 7`)
+exec_shell(`iptables -I 2 INPUT  -m limit --limit 40/min  -j LOG --log-prefix "nShield: " --log-level 7`)
 
 if (basicddos == 1 && dryrun == 0) {
     log.Println("Setting up Basic DDos Protection")
-    exec_shell("iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP")
-    exec_shell("iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP")
+    
+/* conntrack will get slaughtered in DDoS esspecially if your drop rules are only in the filter table
+   try placing the tcp drop rules before they are processed by conntrack i.e. in the prerouting chain.
+   since the filter table doesn't have a prerouting chain you should use the mangle table.
+ 
+ the following is just an example for the raw and mangle table prerouting chain (beforebefore routing decisions) that would also save on some cpu cycles on old/low powered hardware 
+ (think arm SoCs or potato PCs)
+ that helps block DDoS and portscanners
+ This is probably overkill but it's a copy-paste from some of my old notes so it might still need testing: 
+ 
+ bogus tcp flags () { */
+ // raw rules for before conntrack (saves more cpu than mangle)
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags SYN,RST SYN,RST -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,RST FIN,RST -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,ACK FIN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ACK,URG URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ACK,FIN FIN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ACK,PSH PSH -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL ALL -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL NONE -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp -m tcp --tcp-flags RST RST -m limit --limit 2/second --limit-burst 2 -j ACCEPT")
+exec_shell("iptables -t raw -A PREROUTING -p tcp -m tcp --tcp-flags RST RST -j DROP")
+ 
+// mangle rules for before routing decisions but after conntrack (saves more cpu than the filter table's input, forward and output chains)
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,RST FIN,RST -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,ACK FIN -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags ACK,URG URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags PSH,ACK PSH -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,PSH,ACK,URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,PSH,URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,ACK,URG -j DROP")
+//} 
+
+//OR you could use this from another set of rules which is a little simpler:
+ /*
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags SYN,RST SYN,RST -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,RST FIN,RST -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,ACK FIN -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,URG URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,FIN FIN -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,PSH PSH -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL ALL -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL NONE -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP")
+*/
+
+//(## I think) portscanners () { 
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags ALL NONE -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL ALL -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags RST RST -m limit --limit 2/second --limit-burst 2 -j ACCEPT")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags RST RST -j DROP")
+//}
+
+exec_shell("iptables -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp ! --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m state --state NEW -m recent --set --name DEFAULT --rsource")
+exec_shell("iptables -t mangle -A PREROUTING -p tcp -m state --state NEW -m recent --update --seconds 10 --hitcount 25 --name DEFAULT --rsource -j DROP")
+exec_shell("iptables -t mangle -A PREROUTING -p icmp -m limit --limit 2/sec -j ACCEPT")
+exec_shell("iptables -t mangle -A PREROUTING -p icmp -j DROP")
+
+//synproxy () {
+exec_shell("iptables -t raw -A PREROUTING -p tcp -m tcp --syn -j CT --notrack")
+exec_shell("iptables -A INPUT -p tcp -m tcp -m conntrack --ctstate INVALID,UNTRACKED -j SYNPROXY --sack-perm --timestamp --wscale 7 --mss 1460")
+exec_shell("iptables -A INPUT -m state --state INVALID -j DROP")
+/*}
+
+You can also use these kernel modifications explicitly to ensure further DDoS mitigation
+
+To prevent smurf attack. */
+exec_shell("echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts")
+exec_shell("echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects")
+exec_shell("echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route")
+
+//Drop source routed packets
+exec_shell("echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route")
+
+//To prevent SYN Flood and TCP Starvation.
+
+exec_shell("sysctl -w net/ipv4/tcp_syncookies=1")
+exec_shell("sysctl -w net/ipv4/tcp_timestamps=1")
+exec_shell("echo 2048 > /proc/sys/net/ipv4/tcp_max_syn_backlog")
+exec_shell("echo 3 > /proc/sys/net/ipv4/tcp_synack_retries")
+
+/*Enable Address Spoofing Protection
+To prevent IP Spoof. */
+
+exec_shell("echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter")
+
+/*Disable SYN Packet tracking
+To prevent the system from using resources tracking SYN Packets. */
+
+exec_shell("sysctl -w net/netfilter/nf_conntrack_tcp_loose=0")
+
+ 
+/*
+sources:
+https://www.hackplayers.com/2016/04/proteccion-ddos-mediante-exec_shell("iptables.html
+https://security.stackexchange.com/questions/4603/tips-for-a-secure-exec_shell("iptables-config-to-defend-from-attacks-client-side
+*/
+ //exec_shell("iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP")  //updated syntax below
+    exec_shell("iptables -A INPUT -p tcp ! --syn -m conntrack --ctstate NEW -m comment --comment "All TCP sessions should begin with SYN" -j DROP")
+    exec_shell("iptables -A INPUT -p tcp -m tcp ! --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW -m comment --comment "syn flood" -j DROP")
+    exec_shell("iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP") // xmas packets port scanning
     exec_shell("iptables -A INPUT -p icmp -m icmp --icmp-type timestamp-request -j DROP && iptables -A INPUT -p icmp -m limit --limit 1/second -j ACCEPT")
     exec_shell("/sbin/sysctl -w net/netfilter/nf_conntrack_tcp_loose=0")
     exec_shell("echo 1000000 > /sys/module/nf_conntrack/parameters/hashsize && /sbin/sysctl -w net/netfilter/nf_conntrack_max=2000000 &&  /sbin/sysctl -w net.ipv4.tcp_syn_retries=2 &&  /sbin/sysctl -w net.ipv4.tcp_rfc1337=1  && /sbin/sysctl -w net.ipv4.tcp_synack_retries=1")
-
 }
 
 
