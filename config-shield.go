@@ -137,13 +137,31 @@ if (basicddos == 1 && dryrun == 0) {
    try placing the tcp drop rules before they are processed by conntrack i.e. in the prerouting chain.
    since the filter table doesn't have a prerouting chain you should use the mangle table.
  
- the following is just an example for the mangle table prerouting chain (before conntrack) that would also save on some cpu cycles on old/low powered hardware 
+ the following is just an example for the raw and mangle table prerouting chain (beforebefore routing decisions) that would also save on some cpu cycles on old/low powered hardware 
  (think arm SoCs or potato PCs)
  that helps block DDoS and portscanners
  This is probably overkill but it's a copy-paste from some of my old notes so it might still need testing: 
  
  bogus tcp flags () { */
-
+ // raw rules for before conntrack (saves more cpu than mangle)
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags SYN,RST SYN,RST -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,RST FIN,RST -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags FIN,ACK FIN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ACK,URG URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ACK,FIN FIN -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ACK,PSH PSH -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL ALL -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL NONE -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP")
+exec_shell("iptables -t raw -A PREROUTING -p tcp -m tcp --tcp-flags RST RST -m limit --limit 2/second --limit-burst 2 -j ACCEPT")
+exec_shell("iptables -t raw -A PREROUTING -p tcp -m tcp --tcp-flags RST RST -j DROP")
+ 
+// mangle rules for before routing decisions but after conntrack (saves more cpu than the filter table's input, forward and output chains)
 exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP")
 exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP")
 exec_shell("iptables -t mangle -A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP")
